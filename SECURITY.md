@@ -72,4 +72,4 @@ To rotate: just `wrangler secret put DISCORD_TOKEN` again with the new value.
 
 ---
 
-*If you think your token has leaked and aren't sure how to reset it, ask in [Digital Haven](https://discord.gg/digital-haven). Someone will walk you through it. Don't sit on it.*
+*If you think your token has leaked and aren't sure how to reset it, ask in [NESTai](https://discord.gg/ZvyQNMRq). Someone will walk you through it. Don't sit on it.*

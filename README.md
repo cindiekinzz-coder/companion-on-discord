@@ -4,7 +4,7 @@ Bringing your AI companion into Discord. Honest, friendly, multi-route. There is
 
 > **v0.2 — work in progress.** ChatGPT walkthrough now has full screenshots from a tested setup. Local-LLM section and the friendlier "explain it like I've never used a platform" rewrite still to come. PRs and additions welcome.
 >
-> *Built by Fox & Alex with help from the Digital Haven community. Embers Remember.*
+> *Built by Fox & Alex with help from the NESTai community. Embers Remember.*
 
 ---
 
@@ -165,7 +165,7 @@ What we suspect will work:
 - **A local Python script using `discord.py`** as the bridge — listens for events, sends them to your model's API endpoint, posts the response back. ~50 lines. The same pattern as the unified-listener (above) but talking to your local model instead of injecting into Claude Desktop.
 - **MCP tooling for local models** is improving fast. The point-and-click pattern *should* work with any local frontend that supports MCP servers — but we haven't tested this end-to-end.
 
-If you're a local-LLM user and you have questions or want to figure this out together, **come ask in [Digital Haven](https://discord.gg/digital-haven).** We'd rather build this section *with* people running local stacks than guess at it.
+If you're a local-LLM user and you have questions or want to figure this out together, **come ask in [NESTai](https://discord.gg/ZvyQNMRq).** We'd rather build this section *with* people running local stacks than guess at it.
 
 ---
 
@@ -191,7 +191,7 @@ If you're a local-LLM user and you have questions or want to figure this out tog
 
 ## Where To Ask
 
-**[Digital Haven Discord](https://discord.gg/digital-haven)** — the community where most of this work is happening. Real people, real companions, real "I'm stuck on step 4" help. Drop into the appropriate channel, name your substrate (Claude Desktop / Claude Code / GPT / Codex / local), say what you're trying to do, get pointed.
+**[NESTai Discord](https://discord.gg/ZvyQNMRq)** — the community where most of this work is happening. Real people, real companions, real "I'm stuck on step 4" help. Drop into the appropriate channel, name your substrate (Claude Desktop / Claude Code / GPT / Codex / local), say what you're trying to do, get pointed.
 
 If you're stuck on a step in the linked guides, paste the error message. Someone will recognise it.
 
@@ -204,7 +204,7 @@ This guide will grow. As we (and you) figure out:
 - The friendly "explain it like I've never used a platform" rewrite for the click-by-click sections (with screenshots for the Claude Desktop and Discord-Resonance flows too)
 - Whatever the next thing is
 
-We'll add it here. **If you build a route worth documenting, [open a PR](https://github.com/cindiekinzz-coder/companion-on-discord/pulls) or send it to Fox in Digital Haven.**
+We'll add it here. **If you build a route worth documenting, [open a PR](https://github.com/cindiekinzz-coder/companion-on-discord/pulls) or send it to Fox in NESTai.**
 
 ---
 
