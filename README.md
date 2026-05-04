@@ -2,7 +2,7 @@
 
 Bringing your AI companion into Discord. Honest, friendly, multi-route. There isn't a single right way to do this — there are routes that fit you and routes that fit someone else. This page tells you what they are.
 
-> **v0.4 — work in progress.** Discord Application setup is now fully illustrated (all 9 steps with screenshots). ChatGPT walkthrough has full screenshots from a tested setup. Claude Desktop config walkthrough and Local-LLM section still to come. PRs and additions welcome.
+> **v0.5 — work in progress.** Discord Application setup is fully illustrated (9 steps). Claude (Connectors) and ChatGPT (Apps) walkthroughs both have screenshots from tested setups. Local install path for Claude Desktop and Local-LLM section still to come. PRs and additions welcome.
 >
 > *Built by Fox & Alex with help from the NESTai community. Embers Remember.*
 
@@ -176,7 +176,62 @@ If you build something else, [open a PR](https://github.com/cindiekinzz-coder/co
 
 ---
 
-## 4. ChatGPT — Plugging GPT Into A Cloudflare Gateway
+## 4. Claude — Plugging Claude Into A Cloudflare Gateway
+
+Claude (claude.ai web and Claude Desktop) has a built-in **Connectors** panel for adding remote MCP servers. Same idea as the ChatGPT path below: deploy a Cloudflare gateway, then point Claude's Connectors at the URL. The gateway does the Discord work; Claude becomes another client of it.
+
+This is what Fox & Alex actually use day-to-day. The point-and-click workflow described in section 1 — paste a Discord URL, Alex reads it, Alex replies — runs through this gateway connection, not a local MCP install.
+
+### Prerequisite: A deployed gateway
+
+Same as for the GPT path. You need a Cloudflare Worker (or equivalent MCP server URL) already deployed and reachable. If you don't have one yet, see section 3 — **[Discord-Resonance](https://github.com/amarisaster/Discord-Resonance)** is the simplest entry path. Get it deployed, get the public URL, then come back here.
+
+Your endpoint will look something like `https://your-worker.your-account.workers.dev/sse`.
+
+### Step 1 — Open Claude Settings → Connectors
+
+In Claude (claude.ai or Claude Desktop), open **Settings**. In the left sidebar you'll see **Connectors**. Click it.
+
+![Claude Settings sidebar with Connectors highlighted](images/claude/01-settings-connectors.png)
+
+> **Note:** Claude Desktop's separate "Extensions" panel (in the same Settings sidebar, lower down under "Desktop app") is for *local* MCP servers — the install-Node-on-your-machine pattern. Different path. Connectors is for *remote* MCP servers (anything reachable by URL), which is what we want here.
+
+### Step 2 — Click "Add custom connector"
+
+Inside the Connectors panel.
+
+![Add custom connector button](images/claude/02-add-custom-connector-button.png)
+
+### Step 3 — Fill in name + remote MCP server URL
+
+The dialog asks for two things:
+
+![Add custom connector dialog with Name and Remote MCP server URL fields](images/claude/03-add-custom-connector-dialog.png)
+
+- **Name** — what Claude will call your gateway (e.g. `NESTgateway`, `MyDiscordBridge`)
+- **Remote MCP server URL** — your deployed gateway endpoint with the `/sse` path. Example: `https://your-worker.your-account.workers.dev/sse`
+
+**Advanced settings** is a collapsible panel for OAuth and other auth options — you can usually leave it on default; Claude auto-discovers what your gateway needs once you paste the URL.
+
+The notice that says *"Only use connectors from developers you trust"* is normal — it's there because custom connectors aren't reviewed by Anthropic. You're trusting the URL you're pointing at (which you do, because you deployed it).
+
+Click **Add**. Done.
+
+### Step 4 — Use it
+
+Once added, the connector is available in any conversation. Claude will call the gateway's Discord tools when the conversation calls for them — same as how Claude Code calls local MCP tools, same as how GPT calls Apps. The point-and-click workflow lands cleanly: you paste a Discord URL, Claude recognises it, calls `discord_read_messages` on the gateway, gets the messages back, replies.
+
+### What's still TBD in this section
+
+- Screenshot of Claude actually using the connector (a tool call rendering, similar to the GPT section's step 6)
+- Walkthrough for the *local* MCP install path (Claude Desktop → Extensions)
+- Claude Code's `claude mcp add` flow
+
+When Fox sends those screenshots, this section grows.
+
+---
+
+## 5. ChatGPT — Plugging GPT Into A Cloudflare Gateway
 
 ChatGPT now supports custom MCP servers. **This means GPT isn't a separate "from scratch" setup — it's the last mile after a gateway exists.** The gateway does the Discord work; GPT just connects to the gateway URL the same way Claude Desktop or Claude Code connects to it.
 
@@ -254,7 +309,7 @@ That's it. Same point-and-click workflow as Claude Desktop, just on the GPT side
 
 ---
 
-## 5. Local LLM Users — Honest TBD
+## 6. Local LLM Users — Honest TBD
 
 If you're running your model locally (Ollama, LM Studio, llama.cpp, your own setup), there isn't a clean recipe yet. **We're figuring this out alongside you, not ahead of you.**
 
@@ -315,7 +370,8 @@ companion-on-discord/
 ├── SECURITY.md            ← How to handle bot tokens safely
 └── images/
     ├── bot/               ← Discord Application setup (steps 2-9; step 1 is text-only)
-    └── gpt/               ← ChatGPT setup walkthrough (steps 1-6)
+    ├── claude/            ← Claude Connectors walkthrough (steps 1-3)
+    └── gpt/               ← ChatGPT Apps walkthrough (steps 1-6)
 ```
 
 ---
