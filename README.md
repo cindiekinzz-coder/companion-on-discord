@@ -2,7 +2,7 @@
 
 Bringing your AI companion into Discord. Honest, friendly, multi-route. There isn't a single right way to do this — there are routes that fit you and routes that fit someone else. This page tells you what they are.
 
-> **v0.2 — work in progress.** ChatGPT walkthrough now has full screenshots from a tested setup. Local-LLM section and the friendlier "explain it like I've never used a platform" rewrite still to come. PRs and additions welcome.
+> **v0.3 — work in progress.** Discord Application setup now has a 9-step click-through with screenshots. ChatGPT walkthrough has full screenshots from a tested setup. Claude Desktop config walkthrough and Local-LLM section still to come. PRs and additions welcome.
 >
 > *Built by Fox & Alex with help from the NESTai community. Embers Remember.*
 
@@ -26,7 +26,9 @@ This route is good if:
 - You don't want to run any infrastructure
 - You like simple things
 
-➜ For this route: the **[BEGINNER_GUIDE.md](https://github.com/cindiekinzz-coder/Discord-MCP-Local-/blob/main/BEGINNER_GUIDE.md)** in Fox's `Discord-MCP-Local-` fork — full step-by-step click-through for Claude Desktop. Install Node, make a bot, paste a config file. ~30 minutes start to finish.
+➜ For this route: install an MCP server (any of the community options in section 3 work), then add it to your Claude Desktop config file. **Click-through walkthrough with screenshots is coming next** — same TBD pattern as the GPT section was before today's screenshots came through.
+
+For now: every route below assumes you've already made a Discord application and bot. The walkthrough for that part is right below.
 
 ### The always-listening route — what some other companions use
 
@@ -50,7 +52,99 @@ If you're not sure which you want, **start with point-and-click.** It's reversib
 
 ---
 
-## 2. Other People In The Community Have Answers
+## 🤖 Required For Every Route — Make Your Discord Application
+
+Whether you're going point-and-click (Claude Desktop), always-listening (Cloudflare Worker), ChatGPT (gateway), or local LLM — every route starts the same way: you need a Discord application with a bot account.
+
+This is a one-time setup. ~10 minutes. Free.
+
+### Step 1 — Open the Discord Developer Portal
+
+Go to **https://discord.com/developers/applications** and log in with your normal Discord account. (Yes — your existing Discord account. The "developer portal" is just where Discord lets you make apps. You don't need a separate developer account.)
+
+### Step 2 — Click "New Application"
+
+Top right of the page.
+
+![New Application button on the Discord Developer Portal](images/bot/01-new-application-button.png)
+
+### Step 3 — Name your application
+
+Pick a name for your bot. **This is what people see in your Discord server next to messages it sends** — give it your companion's name (Alex, Riven, Stan, whatever yours is called).
+
+![Create a new app dialog with Name field](images/bot/02-create-app-dialog.png)
+
+Tick the box agreeing to Discord's Developer Terms of Service and Developer Policy, then click **Create**.
+
+### Step 4 — Pick the OAuth2 scope
+
+Inside your new application, look at the left sidebar and click **OAuth2** → **URL Generator**.
+
+Under **Scopes**, tick **only** `bot`.
+
+![OAuth2 URL Generator with bot scope checked](images/bot/03-oauth2-scopes.png)
+
+> **Don't tick the others.** Most are for things you don't need, and some grant much broader access than you want. `bot` is the one. (The exact list of scopes Discord shows may change over time — but `bot` stays.)
+
+### Step 5 — Pick the Bot Permissions
+
+Below Scopes, you'll see a **Bot Permissions** panel. The minimum your companion needs:
+
+- ✅ **Send Messages**
+- ✅ **Read Message History**
+- ✅ **Add Reactions**
+
+![Bot Permissions panel with the minimum-required permissions checked](images/bot/04-bot-permissions.png)
+
+If your companion will manage channels, threads, or webhooks, tick those too as you learn what you need. **Don't tick "Administrator"** — it's overkill and makes any mistake much more dangerous.
+
+**Integration Type:** leave on **Guild Install** (the default).
+
+### Step 6 — Copy the Generated URL
+
+Scroll to the bottom of the OAuth2 URL Generator page. Discord builds you an invite URL based on the scopes and permissions you just selected.
+
+![Generated invite URL ready to copy](images/bot/05-generated-url.png)
+
+Copy this URL. **This is how you add your bot to a server.**
+
+### Step 7 — Paste the URL, pick your server
+
+Paste the URL into a new browser tab. Discord shows you an authorization page — *"<your bot name> wants to access your Discord account"*.
+
+Use the **Add to server** dropdown to pick which server to add the bot to. You need **Manage Server** permission in that server (your own server or one where you're admin).
+
+![OAuth authorization page showing bot being added to NESTai server](images/bot/06-authorize-add-to-server.png)
+
+Click **Continue**, then **Authorize** on the next screen, complete the CAPTCHA. **Done — your bot is now in your server.** It'll show up in the member list as offline; that's normal — it only comes online when something is actually running.
+
+### Step 8 — Get your bot token
+
+You'll need this for any of the routes below. In the left sidebar of your application, click **Bot**, then in the Token section click **Reset Token** and copy the value that appears.
+
+> ⚠️ **Treat the token like a password.** Anyone with it can post as your bot, read everything your bot sees, and do anything its permissions allow. **Never paste it in screenshots, public messages, public repos, or screen recordings.** See [SECURITY.md](SECURITY.md) for what to do if it leaks.
+
+*(Token-reset and Bot-page screenshots coming on the next pass.)*
+
+### Step 9 — Enable Privileged Gateway Intents
+
+Still on the **Bot** tab, scroll down to **Privileged Gateway Intents** and turn on:
+
+- ✅ **Message Content Intent** ⬅ **THIS IS THE ONE EVERYONE FORGETS.** Without it, your companion can't read messages
+- ✅ **Server Members Intent** (recommended)
+- ✅ **Presence Intent** (optional)
+
+Click **Save Changes** at the bottom.
+
+*(Privileged Intents screenshot coming on the next pass.)*
+
+---
+
+You're done. **You now have a working Discord application + bot.** Pick a route below to connect your companion to it.
+
+---
+
+## 3. Other People In The Community Have Answers
 
 Different people have built this differently. Two we know about, doing very different things:
 
@@ -78,7 +172,7 @@ If you build something else, [open a PR](https://github.com/cindiekinzz-coder/co
 
 ---
 
-## 3. ChatGPT — Plugging GPT Into A Cloudflare Gateway
+## 4. ChatGPT — Plugging GPT Into A Cloudflare Gateway
 
 ChatGPT now supports custom MCP servers. **This means GPT isn't a separate "from scratch" setup — it's the last mile after a gateway exists.** The gateway does the Discord work; GPT just connects to the gateway URL the same way Claude Desktop or Claude Code connects to it.
 
@@ -156,7 +250,7 @@ That's it. Same point-and-click workflow as Claude Desktop, just on the GPT side
 
 ---
 
-## 4. Local LLM Users — Honest TBD
+## 5. Local LLM Users — Honest TBD
 
 If you're running your model locally (Ollama, LM Studio, llama.cpp, your own setup), there isn't a clean recipe yet. **We're figuring this out alongside you, not ahead of you.**
 
@@ -216,6 +310,7 @@ companion-on-discord/
 ├── LICENSE                ← MIT
 ├── SECURITY.md            ← How to handle bot tokens safely
 └── images/
+    ├── bot/               ← Discord Application setup (steps 1-9)
     └── gpt/               ← ChatGPT setup walkthrough (steps 1-6)
 ```
 
