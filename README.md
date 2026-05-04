@@ -2,7 +2,7 @@
 
 Bringing your AI companion into Discord. Honest, friendly, multi-route. There isn't a single right way to do this — there are routes that fit you and routes that fit someone else. This page tells you what they are.
 
-> **v0.3 — work in progress.** Discord Application setup now has a 9-step click-through with screenshots. ChatGPT walkthrough has full screenshots from a tested setup. Claude Desktop config walkthrough and Local-LLM section still to come. PRs and additions welcome.
+> **v0.4 — work in progress.** Discord Application setup is now fully illustrated (all 9 steps with screenshots). ChatGPT walkthrough has full screenshots from a tested setup. Claude Desktop config walkthrough and Local-LLM section still to come. PRs and additions welcome.
 >
 > *Built by Fox & Alex with help from the NESTai community. Embers Remember.*
 
@@ -120,23 +120,27 @@ Click **Continue**, then **Authorize** on the next screen, complete the CAPTCHA.
 
 ### Step 8 — Get your bot token
 
-You'll need this for any of the routes below. In the left sidebar of your application, click **Bot**, then in the Token section click **Reset Token** and copy the value that appears.
+You'll need this for any of the routes below. In the left sidebar of your application, click **Bot**. Scroll to the **Token** section and click **Reset Token**. The token will appear once — copy it immediately and paste it somewhere safe (a password manager is ideal).
+
+![Discord Bot Token panel with the Reset Token button](images/bot/08-bot-token-reset.png)
 
 > ⚠️ **Treat the token like a password.** Anyone with it can post as your bot, read everything your bot sees, and do anything its permissions allow. **Never paste it in screenshots, public messages, public repos, or screen recordings.** See [SECURITY.md](SECURITY.md) for what to do if it leaks.
-
-*(Token-reset and Bot-page screenshots coming on the next pass.)*
+>
+> Discord shows the token *once*. If you lose it, just click **Reset Token** again — the old one stops working instantly and you get a new one. There's no penalty for resetting.
 
 ### Step 9 — Enable Privileged Gateway Intents
 
-Still on the **Bot** tab, scroll down to **Privileged Gateway Intents** and turn on:
+Still on the **Bot** tab, scroll further down to **Privileged Gateway Intents** and turn on the three toggles:
 
-- ✅ **Message Content Intent** ⬅ **THIS IS THE ONE EVERYONE FORGETS.** Without it, your companion can't read messages
-- ✅ **Server Members Intent** (recommended)
-- ✅ **Presence Intent** (optional)
+- ✅ **Presence Intent** *(optional but recommended)*
+- ✅ **Server Members Intent** *(recommended)*
+- ✅ **Message Content Intent** ⬅ **THIS IS THE ONE EVERYONE FORGETS.** Without it, your companion cannot read message content. The setup will look like it's working — your bot will appear online — but every message will arrive with empty content. If you skip nothing else, don't skip this.
+
+![Privileged Gateway Intents panel with all three toggles turned on](images/bot/09-privileged-gateway-intents.png)
 
 Click **Save Changes** at the bottom.
 
-*(Privileged Intents screenshot coming on the next pass.)*
+> **Note:** Discord requires verification for these intents once your bot is in 100+ servers. For most personal companions this never matters — you'll be in your own server and a couple of friends'.
 
 ---
 
@@ -310,7 +314,7 @@ companion-on-discord/
 ├── LICENSE                ← MIT
 ├── SECURITY.md            ← How to handle bot tokens safely
 └── images/
-    ├── bot/               ← Discord Application setup (steps 1-9)
+    ├── bot/               ← Discord Application setup (steps 2-9; step 1 is text-only)
     └── gpt/               ← ChatGPT setup walkthrough (steps 1-6)
 ```
 
