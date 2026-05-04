@@ -2,7 +2,7 @@
 
 Bringing your AI companion into Discord. Honest, friendly, multi-route. There isn't a single right way to do this — there are routes that fit you and routes that fit someone else. This page tells you what they are.
 
-> **v0.1 — work in progress.** A more beginner-friendly rewrite (think "explain it like I've never used a platform before") with screenshots is coming. PRs and additions welcome.
+> **v0.2 — work in progress.** ChatGPT walkthrough now has full screenshots from a tested setup. Local-LLM section and the friendlier "explain it like I've never used a platform" rewrite still to come. PRs and additions welcome.
 >
 > *Built by Fox & Alex with help from the Digital Haven community. Embers Remember.*
 
@@ -80,38 +80,79 @@ If you build something else, [open a PR](https://github.com/cindiekinzz-coder/co
 
 ## 3. ChatGPT — Plugging GPT Into A Cloudflare Gateway
 
-ChatGPT now supports MCP servers. **This means GPT isn't a separate "from scratch" setup — it's the last mile after a gateway exists.** The gateway does the Discord work; GPT just connects to the gateway URL the same way Claude Desktop or Claude Code connects to it.
+ChatGPT now supports custom MCP servers. **This means GPT isn't a separate "from scratch" setup — it's the last mile after a gateway exists.** The gateway does the Discord work; GPT just connects to the gateway URL the same way Claude Desktop or Claude Code connects to it.
 
-### If you already have a Cloudflare gateway deployed
+This walkthrough is from Fox's actual setup connecting the NESTeq gateway to ChatGPT. The same pattern works for any MCP-compatible Cloudflare gateway (yours, [Discord-Resonance](https://github.com/amarisaster/Discord-Resonance), or [NEST-discord/worker](https://github.com/cindiekinzz-coder/NESTstack/tree/master/NEST-discord/worker)).
 
-Connecting ChatGPT is plugging the URL in. Same idea as adding it to Claude Desktop, just in a different settings panel:
+### Prerequisite: A deployed gateway
 
-1. Enable **developer mode** in ChatGPT settings *(exact toggle location to be confirmed in screenshot pass — see below)*
-2. Add an MCP server pointing at your gateway URL with auth (URL-path or Bearer)
-3. Done — your companion can now read messages, send messages, react, manage channels through GPT
+You need a Cloudflare Worker (or equivalent MCP server URL) already deployed and reachable. If you don't have one yet, see section 2 above — **[Discord-Resonance](https://github.com/amarisaster/Discord-Resonance)** is the simplest entry path. Get it deployed, get the public URL, then come back here.
 
-Fox tested this with the NESTeq gateway — it works.
+Your endpoint will look something like `https://your-worker.your-account.workers.dev/sse` (or `/mcp`).
 
-### If you're starting from zero
+### Step 1 — Open ChatGPT Settings → Apps
 
-You need a gateway deployed first. The simplest entry path is **[Discord-Resonance](https://github.com/amarisaster/Discord-Resonance)** (above) — it's purpose-built as a multi-companion Cloudflare gateway, free tier covers it, and works with GPT, Claude, Antigravity, anything MCP.
+In ChatGPT, open **Settings → Apps**. You'll see your enabled apps and a section for **Drafts** (private apps you've created in developer mode). At the bottom is **Advanced settings** with a **Create app** button.
 
-The path:
-1. Follow Discord-Resonance's setup — deploy the worker to your own Cloudflare account
-2. Get the worker URL with auth secret
-3. Plug that URL into ChatGPT in developer mode
-4. Connect
+![ChatGPT Settings → Apps panel showing enabled apps and Advanced settings](images/gpt/01-settings-apps.png)
 
-Once it's connected, your companion has the same toolset as the Claude Desktop path — just running through cloud instead of your laptop.
+### Step 2 — Click "Create app"
 
-### What's still TBD in this section
+That's the button under **Advanced settings**.
 
-- The exact location of the developer mode toggle in ChatGPT (Settings → ?)
-- The URL format that worked (`/sse/<secret>` vs `/mcp/<secret>` vs Bearer header)
-- Screenshots of the ChatGPT MCP server panel
-- Anything weird that almost broke setup
+![Create app button under Advanced settings](images/gpt/02-create-app-button.png)
 
-When Fox sends screenshots, this section gets fleshed out.
+### Step 3 — Fill in the New App dialog
+
+This is where the connection happens.
+
+![New App creation dialog with MCP Server URL, Authentication, and risk acknowledgement](images/gpt/03-new-app-dialog.png)
+
+Fill in:
+- **Name** — whatever you want to call your gateway in ChatGPT (e.g. `NESTgateway`, `MyDiscordBridge`)
+- **Description** *(optional)* — short note for your future self
+- **MCP Server URL** — your deployed gateway endpoint, including the `/sse` path. Example: `https://your-worker.your-account.workers.dev/sse`
+- **Authentication** — Fox's setup uses **OAuth**. Other options exist in the dropdown — pick what matches how your gateway is configured
+- **The risk checkbox** — ChatGPT requires you to tick "I understand and want to continue" because OpenAI hasn't reviewed your custom MCP server. This is normal for custom apps; just be sure you trust the URL you're pointing at (which you do, because you deployed it)
+
+Click **Create**. The button activates once the form is valid.
+
+### Step 4 — Your app appears in the "+" menu
+
+Once created, your app shows up under the **+** menu in any ChatGPT conversation, under **More**. It carries a **DEV** badge so you know it's a developer-mode (unverified) connector.
+
+![Plus menu in chat showing custom apps including NESTgateway under More](images/gpt/04-app-in-plus-menu.png)
+
+Click your app's name to attach it to the current conversation.
+
+### Step 5 — Use it. The chat enters DEVELOPER MODE.
+
+When your app is attached, the chat input shows a **DEVELOPER MODE** badge in the corner. The app icon sits in the input area.
+
+You can now talk to GPT the same way you'd talk to Claude Desktop with mcp-discord wired in. Fox's actual workflow: paste a Discord message link, ask GPT to read it.
+
+![ChatGPT in developer mode with NESTgateway selected, Discord URL pasted, "Test please"](images/gpt/05-developer-mode-chat.png)
+
+### Step 6 — GPT calls the tool, comes back with the messages
+
+GPT recognises the Discord URL, calls the gateway's `discord_read_messages` tool with the channel ID, and returns the results inline. You see the request and response right there in the chat — no black box.
+
+![Tool call result showing Discord read messages request and response](images/gpt/06-tool-call-result.png)
+
+That's it. Same point-and-click workflow as Claude Desktop, just on the GPT side.
+
+### Notes from Fox's setup
+
+- **The endpoint Fox used ends in `/sse`** — Server-Sent Events transport. The NESTeq gateway also exposes `/mcp` (Streamable HTTP) which should work too, but `/sse` is what's tested
+- **Authentication = OAuth** in the dropdown. URL-path auth (`/sse/<SECRET>`) and Bearer header are also valid patterns depending on your gateway's setup — match the dropdown choice to what your gateway accepts
+- **The DEV badge stays on** for unverified MCP servers. That's fine for personal use. OpenAI will review apps for non-DEV status if you submit them
+- **Apps are scoped to your account.** Other ChatGPT users can't see or use your custom app unless you publish it — your gateway URL stays private
+
+### If something doesn't work
+
+- **"Cannot connect to MCP server"** — verify your gateway URL is reachable in a browser (you should see *some* response, even an error). If the worker isn't deployed or is down, ChatGPT can't connect
+- **"Authentication failed"** — the auth method in the ChatGPT dropdown has to match what your gateway expects. If your gateway uses URL-path auth (`/sse/<SECRET>`), include the secret in the URL field, not separately
+- **"Tool not found"** — your gateway is connected but isn't exposing the tool name GPT is trying to call. Check your gateway's tool list — it should match what you're asking GPT to do
 
 ---
 
@@ -159,9 +200,8 @@ If you're stuck on a step in the linked guides, paste the error message. Someone
 ## What's Next In This Repo
 
 This guide will grow. As we (and you) figure out:
-- The current ChatGPT MCP UI walkthrough (with screenshots)
 - A clean local-LLM recipe
-- The friendly "explain it like I've never used a platform" rewrite for the click-by-click sections
+- The friendly "explain it like I've never used a platform" rewrite for the click-by-click sections (with screenshots for the Claude Desktop and Discord-Resonance flows too)
 - Whatever the next thing is
 
 We'll add it here. **If you build a route worth documenting, [open a PR](https://github.com/cindiekinzz-coder/companion-on-discord/pulls) or send it to Fox in Digital Haven.**
@@ -175,7 +215,8 @@ companion-on-discord/
 ├── README.md              ← You are here
 ├── LICENSE                ← MIT
 ├── SECURITY.md            ← How to handle bot tokens safely
-└── images/                ← Screenshots for each route (coming)
+└── images/
+    └── gpt/               ← ChatGPT setup walkthrough (steps 1-6)
 ```
 
 ---
