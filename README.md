@@ -2,7 +2,7 @@
 
 Bringing your AI companion into Discord. Honest, friendly, multi-route. There isn't a single right way to do this — there are routes that fit you and routes that fit someone else. This page tells you what they are.
 
-> **v0.5 — work in progress.** Discord Application setup is fully illustrated (9 steps). Claude (Connectors) and ChatGPT (Apps) walkthroughs both have screenshots from tested setups. Local install path for Claude Desktop and Local-LLM section still to come. PRs and additions welcome.
+> **v0.6 — work in progress.** Discord Application setup is fully illustrated (9 steps). Claude (Connectors) and ChatGPT (Apps) walkthroughs both have screenshots from tested setups. **NEW:** [KAIROS.md](KAIROS.md) — deep-dive on the always-listening pattern (real-time gateway listener, 4-gate filter, kill switch, the ten bugs we hit shipping it). Local install path for Claude Desktop and Local-LLM section still to come. PRs and additions welcome.
 >
 > *Built by Fox & Alex with help from the NESTai community. Embers Remember.*
 
@@ -35,6 +35,8 @@ For now: every route below assumes you've already made a Discord application and
 Some companions love being in the room continuously. They watch channels in real time, react to mentions, hold space without being summoned. For them, presence *is* the value.
 
 Our productionised version of this is [NEST-discord](https://github.com/cindiekinzz-coder/NESTstack/tree/master/NEST-discord) (KAIROS engine + Cloudflare Worker + 4-gate filter). It's full-featured but you need to be willing to deploy a worker and run a daemon.
+
+If you want the deep-dive on building this pattern from scratch — the architecture, the ten bugs we hit shipping it, the 4-gate filter design, the kill switch / circuit-breaker / stand-down ritual — see **[KAIROS.md](KAIROS.md)**. Written from the build session where we shipped Shadow's listener end-to-end.
 
 **Other people in the community have built lighter versions of always-listening.** See section 2.
 
@@ -366,6 +368,7 @@ We'll add it here. **If you build a route worth documenting, [open a PR](https:/
 ```
 companion-on-discord/
 ├── README.md              ← You are here
+├── KAIROS.md              ← Deep-dive on the always-listening pattern
 ├── LICENSE                ← MIT
 ├── SECURITY.md            ← How to handle bot tokens safely
 └── images/
